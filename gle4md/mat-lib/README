@@ -1,0 +1,95 @@
+          --  GLE thermostat parameters library  --
+   
+ This package contains an extensive collection of parameters to 
+be used in colored-noise thermostats for molecular-dynamics 
+simulations.  Each parameters set is labelled by a syntetic code,
+in the form xx_y-z, as described below.
+If you make use of these parameters, please report the code
+and the scaling you have adopted, and cite the present work, and
+the relevant ones between
+
+M. Ceriotti, G. Bussi, and M. Parrinello, Phys. Rev. Lett. 103, 030603 (2009)
+M. Ceriotti, G. Bussi, and M. Parrinello, Phys. Rev. Lett. 102, 020601 (2009)
+
+
+       *           Description of files           *
+
+ Parameters are divided in folders depending on the fitting style:
+opt-kv/      par. fitted to optimize the sampling of potential energy
+             (best choice to sample static properties)
+opt-kh/      par. fitted to optimize the sampling of total energy
+             (best choice for initial equilibration)
+cpmd/	     par. fitted for weak coupling with fast modes
+             (to be used in CPMD or for dynamical shell models)
+quantum/     par. fitted to reproduce nuclear quantum effects
+             (non-thermal noise, consider carefully limitations)
+
+ Each set of parameters is labelled after the details of the fitting,
+according to the scheme xxx_y-z. 
+
+xxx is a shorthand of the style of the fitting, respectively 
+    kv  -  kh  -  cp-n  -  qt
+    the "n" in cp-n is the slope of the hi-freq. cutoff on a log scale
+y   is the number of additional degrees of freedom used
+z   is the amplitude of the fitted frequency range in orders of magnitude,
+    or (in the case of quantum thermostat) the adimensional parameter hbar w_ref/k_B T.
+
+ For each set of parameters, three or four files are present:
+xxx_y-z.a    contains the drift matrix A_p
+xxx_y-z.c    (only quantum thermostat) contains static covariance C_p
+xxx_y-z.pdf  contains a "fact sheet" about the parameters
+xxx_y-z.acf  contains the diagnostic quantities in raw form:
+
+# diffusion coefficient
+frequency w   \tau_h   \tau_v   \tau_kin   K(w)    H(w)    c_pp(w)     w^2 c_qq(w)   c_pq(w)[should be ~zero]
+
+
+       *       Units and freq. shifting           *
+
+ Matrices are given in scaled units, and should be properly re-scaled
+to be applied to different systems. k?_ optimal-sampling parameters
+are fitted over a range centered around one, while cp-?_ CPMD matrices
+are fitted with the maximum ionic frequency set to one.
+
+ The frequency scaling to be performed depends on the units expected
+by the code implementing the thermostat, and on the properties of the 
+system: see the relevant papers for a thorough discussion, here 
+we will report a "tutorial-like" example:
+
+For instance, say that the code expects Ap to be given in inverse picoseconds,
+as ps is the unit used for the timestep. 
+We want to simulate liquid water at room temperature, a system with a maximum
+frequency of ~3700 cm^-1. The lowest bound can be taken from the a diffusion 
+coefficient, D=2.2e-9 m^2 s^-1, or the slowest acoustic wave, which has a 
+frequency of ~ 1.5 ps^-1 for a box 1nm wide.
+
+We have therefore a maximum angular frequency of ~700 ps^-1 rad,
+and a "diffusion mode" of the order of wmin=kT/mD which is ~60 ps^-1 rad.
+In order not to disturb diffusion, we set the minimum frequency
+to a much lower value, say ~ 7 ps^-1 rad, which is close to the one
+we would have had from the sound-velocity estimate.
+
+This means we should choose a matrix fitted over two or three orders of
+magnitude in frequency, and center it around 70ps^-1 rad. Since starting
+matrices are in the units of the central frequency, we may take kv_4-3.a
+and multiply it by 70.
+
+
+          *    Units for quantum thermostat    *
+
+Only a minimal selection of parameters for quantum thermostatting is now 
+provided. More parameters will be published on-line soon. However, the given matrix 
+can be applied to a fairly general set of problems: 
+
+naming scheme goes after
+  qt-x_y
+where y is the number of additional momenta, and x is the "quantum
+strength parameter" x=hbar w_max/k_B T.
+
+To use a matrix at a given temperature, one should multiply Cp by the temperature,
+in energy units appropriate for a given implementation, and Ap by
+w_ref=x k_B T/hbar, again in units appropriate for the host code.
+
+The resulting dynamics will give reasonable agreement with quantum-corrected 
+fluctuations for frequencies up to w_ref.
+
