@@ -10,7 +10,8 @@ the relevant ones between
 
 M. Ceriotti, G. Bussi, and M. Parrinello, Phys. Rev. Lett. 103, 030603 (2009)
 M. Ceriotti, G. Bussi, and M. Parrinello, Phys. Rev. Lett. 102, 020601 (2009)
-
+M. Ceriotti, G. Bussi and M. Parrinello, J. Chem. Theory Comput. 6, 1170 (2010) 
+M. Ceriotti and M. Parrinello, Proc. Comp. Sci. 1, 1601 (2010)
 
        *           Description of files           *
 
@@ -23,6 +24,8 @@ cpmd/	     par. fitted for weak coupling with fast modes
              (to be used in CPMD or for dynamical shell models)
 quantum/     par. fitted to reproduce nuclear quantum effects
              (non-thermal noise, consider carefully limitations)
+delta/       par. fitted for delta-thermostatted dynamics
+             (non-thermal noise, selective phonon heating)
 
  Each set of parameters is labelled after the details of the fitting,
 according to the scheme xxx_y-z. 
